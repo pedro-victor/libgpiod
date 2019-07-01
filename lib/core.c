@@ -91,12 +91,14 @@ static bool is_gpiochip_cdev(const char *path)
 
 	name = basename(pathcpy);
 
-	/* Do we have a corresponding sysfs attribute? */
-	rv = asprintf(&sysfsp, "/sys/bus/gpio/devices/%s/dev", name);
-	if (rv < 0)
-		goto out_free_pathcpy;
+	/* we are not going to simulate sysfs attributes */
 
-	if (access(sysfsp, R_OK) != 0) {
+	/* Do we have a corresponding sysfs attribute? */
+	/* rv = asprintf(&sysfsp, "/sys/bus/gpio/devices/%s/dev", name);
+	if (rv < 0)
+		goto out_free_pathcpy; */
+
+	/* if (access(sysfsp, R_OK) != 0) { */
 		/*
 		 * This is a character device but not the one we're after.
 		 * Before the introduction of this function, we'd fail with
@@ -104,15 +106,15 @@ static bool is_gpiochip_cdev(const char *path)
 		 * descriptor. Let's stay compatible here and keep returning
 		 * the same error code.
 		 */
-		errno = ENOTTY;
+	/*	errno = ENOTTY;
 		goto out_free_sysfsp;
-	}
+	} */
 
 	/*
 	 * Make sure the major and minor numbers of the character device
 	 * correspond with the ones in the dev attribute in sysfs.
 	 */
-	snprintf(devstr, sizeof(devstr), "%u:%u",
+	/* snprintf(devstr, sizeof(devstr), "%u:%u",
 		 major(statbuf.st_rdev), minor(statbuf.st_rdev));
 
 	fd = open(sysfsp, O_RDONLY);
@@ -128,7 +130,7 @@ static bool is_gpiochip_cdev(const char *path)
 	if (strcmp(sysfsdev, devstr) != 0) {
 		errno = ENODEV;
 		goto out_free_sysfsp;
-	}
+	} */
 
 	ret = true;
 
